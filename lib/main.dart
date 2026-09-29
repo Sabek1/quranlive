@@ -998,15 +998,37 @@ class _AiScreenState extends State<AiScreen> {
           alignment: user ? Alignment.centerRight : Alignment.centerLeft,
           child: Card(
             color: user ? Theme.of(context).colorScheme.primaryContainer : null,
-            child: Padding(padding: const EdgeInsets.all(12), child: SelectableText(msgs[i]['content'] ?? '', textDirection: TextDirection.rtl)),
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(msgs[i]['content'] ?? '', textDirection: TextDirection.rtl),
+            ),
           ),
         );
       },
     )),
-    Padding(padding: const EdgeInsets.all(8), child: Row(children: [
-      Expanded(child: TextField(controller: input, decoration: const InputDecoration(hintText: 'اسأل...', border: OutlineInputBorder()), onSubmitted: (_) => send())),
-      const SizedBox(width: 8),
-      IconButton.filled(onPressed: send, icon: const Icon(Icons.send)),
-    ])),
+    SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(children: [
+          Expanded(
+            child: TextField(
+              controller: input,
+              minLines: 1,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                hintText: 'اكتب سؤالك...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FloatingActionButton(
+            onPressed: loading ? null : send,
+            child: loading ? const CircularProgressIndicator() : const Icon(Icons.send),
+          ),
+        ]),
+      ),
+    ),
   ]);
 }
