@@ -63,7 +63,7 @@ class _QuranLiveAppState extends State<QuranLiveApp> {
       themeMode: widget.store.theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
       home: Scaffold(
         appBar: AppBar(
-          title: Row(children: const [
+          title: const Row(children: [
             Icon(Icons.mosque), SizedBox(width: 8), Text('QuranLive')
           ]),
           actions: [
@@ -79,10 +79,10 @@ class _QuranLiveAppState extends State<QuranLiveApp> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                DrawerHeader(
+                const DrawerHeader(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.mosque, size: 58),
                       SizedBox(height: 8),
                       Text('QuranLive', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -410,9 +410,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ))),
       const SizedBox(height: 12),
-      Card(child: Padding(padding: const EdgeInsets.all(16), child: Column(
+      const Card(child: Padding(padding: EdgeInsets.all(16), child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
+        children: [
           Text('🌿 آية اليوم', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           SizedBox(height: 14),
           Text('إِنَّ مَعَ الْعُسْرِ يُسْرًا', textAlign: TextAlign.center, style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
@@ -930,7 +930,7 @@ class SettingsScreen extends StatelessWidget {
         },
       ),
     ])),
-    Card(child: ListTile(leading: const Icon(Icons.privacy_tip), title: const Text('الخصوصية'), subtitle: const Text('المفضلة والإعدادات محفوظة محلياً على جهازك.'))),
+    const Card(child: ListTile(leading: Icon(Icons.privacy_tip), title: Text('الخصوصية'), subtitle: Text('المفضلة والإعدادات محفوظة محلياً على جهازك.'))),
   ]);
 }
 
@@ -998,15 +998,15 @@ class _AiScreenState extends State<AiScreen> {
           alignment: user ? Alignment.centerRight : Alignment.centerLeft,
           child: Card(
             color: user ? Theme.of(context).colorScheme.primaryContainer : null,
-            child: Padding(padding: const EdgeInsets.all(12), child: Text(msgs[i]['content'] ?? '')),
+            child: Padding(padding: const EdgeInsets.all(12), child: SelectableText(msgs[i]['content'] ?? '', textDirection: TextDirection.rtl)),
           ),
         );
       },
     )),
-    Padding(padding: const EdgeInsets.all(10), child: Row(children: [
-      Expanded(child: TextField(controller: input, minLines: 1, maxLines: 4, decoration: const InputDecoration(hintText: 'اسأل مساعد QuranLive...', border: OutlineInputBorder()))),
-      const SizedBox(width: 6),
-      IconButton(onPressed: loading ? null : send, icon: loading ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.send)),
+    Padding(padding: const EdgeInsets.all(8), child: Row(children: [
+      Expanded(child: TextField(controller: input, decoration: const InputDecoration(hintText: 'اسأل...', border: OutlineInputBorder()), onSubmitted: (_) => send())),
+      const SizedBox(width: 8),
+      IconButton.filled(onPressed: send, icon: const Icon(Icons.send)),
     ])),
   ]);
 }
