@@ -257,55 +257,84 @@ class StorageService {
 class ApiService {
   static const mp3 = 'https://mp3quran.net/api/v3';
   static const alquran = 'https://api.alquran.cloud/v1';
+  static const Duration timeout = Duration(seconds: 10);
 
   Future<List<Surah>> surahs() async {
-    final r = await http.get(Uri.parse('$alquran/surah/quran-uthmani'));
-    if (r.statusCode != 200) throw Exception('تعذر تحميل السور');
-    final j = jsonDecode(r.body);
-    return (j['data'] as List).map((x) => Surah.fromJson(Map<String, dynamic>.from(x))).toList();
+    try {
+      final r = await http.get(Uri.parse('$alquran/surah/quran-uthmani')).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل السور');
+      final j = jsonDecode(r.body);
+      return (j['data'] as List).map((x) => Surah.fromJson(Map<String, dynamic>.from(x))).toList();
+    } catch (e) {
+      throw Exception('خطأ في تحميل السور: $e');
+    }
   }
 
   Future<List<Reciter>> reciters(String lang) async {
-    final r = await http.get(Uri.parse('$mp3/reciters?language=$lang'));
-    if (r.statusCode != 200) throw Exception('تعذر تحميل القراء');
-    final j = jsonDecode(r.body);
-    return (j['reciters'] as List).map((x) => Reciter.fromJson(Map<String, dynamic>.from(x))).toList();
+    try {
+      final r = await http.get(Uri.parse('$mp3/reciters?language=$lang')).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل القراء');
+      final j = jsonDecode(r.body);
+      return (j['reciters'] as List).map((x) => Reciter.fromJson(Map<String, dynamic>.from(x))).toList();
+    } catch (e) {
+      throw Exception('خطأ في تحميل القراء: $e');
+    }
   }
 
   Future<Map<String, dynamic>> surahText(int id) async {
-    final r = await http.get(Uri.parse('$alquran/surah/$id/quran-uthmani'));
-    if (r.statusCode != 200) throw Exception('تعذر تحميل المصحف');
-    return Map<String, dynamic>.from(jsonDecode(r.body));
+    try {
+      final r = await http.get(Uri.parse('$alquran/surah/$id/quran-uthmani')).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل المصحف');
+      return Map<String, dynamic>.from(jsonDecode(r.body));
+    } catch (e) {
+      throw Exception('خطأ في تحميل المصحف: $e');
+    }
   }
 
   Future<PrayerTimes> prayerByCity(String city, {String country = 'Egypt'}) async {
-    final u = Uri.parse(
-      'https://api.aladhan.com/v1/timingsByCity?city=${Uri.encodeComponent(city)}&country=${Uri.encodeComponent(country)}&method=5',
-    );
-    final r = await http.get(u);
-    if (r.statusCode != 200) throw Exception('تعذر تحميل مواقيت الصلاة');
-    return PrayerTimes.fromJson(Map<String, dynamic>.from(jsonDecode(r.body)['data']));
+    try {
+      final u = Uri.parse(
+        'https://api.aladhan.com/v1/timingsByCity?city=${Uri.encodeComponent(city)}&country=${Uri.encodeComponent(country)}&method=5',
+      );
+      final r = await http.get(u).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل مواقيت الصلاة');
+      return PrayerTimes.fromJson(Map<String, dynamic>.from(jsonDecode(r.body)['data']));
+    } catch (e) {
+      throw Exception('خطأ في تحميل مواقيت الصلاة: $e');
+    }
   }
 
   Future<PrayerTimes> prayerByCoords(double lat, double lon) async {
-    final u = Uri.parse('https://api.aladhan.com/v1/timings?latitude=$lat&longitude=$lon&method=5');
-    final r = await http.get(u);
-    if (r.statusCode != 200) throw Exception('تعذر تحميل مواقيت الصلاة');
-    return PrayerTimes.fromJson(Map<String, dynamic>.from(jsonDecode(r.body)['data']));
+    try {
+      final u = Uri.parse('https://api.aladhan.com/v1/timings?latitude=$lat&longitude=$lon&method=5');
+      final r = await http.get(u).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل مواقيت الصلاة');
+      return PrayerTimes.fromJson(Map<String, dynamic>.from(jsonDecode(r.body)['data']));
+    } catch (e) {
+      throw Exception('خطأ في تحميل مواقيت الصلاة: $e');
+    }
   }
 
   Future<List<Map<String, dynamic>>> radios(String lang) async {
-    final r = await http.get(Uri.parse('$mp3/radios?language=$lang'));
-    if (r.statusCode != 200) throw Exception('تعذر تحميل الإذاعات');
-    final j = jsonDecode(r.body);
-    return List<Map<String, dynamic>>.from(j['radios'] ?? []);
+    try {
+      final r = await http.get(Uri.parse('$mp3/radios?language=$lang')).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل الإذاعات');
+      final j = jsonDecode(r.body);
+      return List<Map<String, dynamic>>.from(j['radios'] ?? []);
+    } catch (e) {
+      throw Exception('خطأ في تحميل الإذاعات: $e');
+    }
   }
 
   Future<List<Map<String, dynamic>>> liveTv(String lang) async {
-    final r = await http.get(Uri.parse('$mp3/live-tv?language=$lang'));
-    if (r.statusCode != 200) throw Exception('تعذر تحميل البث المباشر');
-    final j = jsonDecode(r.body);
-    return List<Map<String, dynamic>>.from(j['livetv'] ?? j['channels'] ?? []);
+    try {
+      final r = await http.get(Uri.parse('$mp3/live-tv?language=$lang')).timeout(timeout);
+      if (r.statusCode != 200) throw Exception('تعذر تحميل البث المباشر');
+      final j = jsonDecode(r.body);
+      return List<Map<String, dynamic>>.from(j['livetv'] ?? j['channels'] ?? []);
+    } catch (e) {
+      throw Exception('خطأ في تحميل البث المباشر: $e');
+    }
   }
 }
 
@@ -315,10 +344,14 @@ class QuranAudioService {
   String? currentArtist;
 
   Future<void> play(String url, {String? title, String? artist}) async {
-    currentTitle = title;
-    currentArtist = artist;
-    await player.setUrl(url);
-    await player.play();
+    try {
+      currentTitle = title;
+      currentArtist = artist;
+      await player.setUrl(url);
+      await player.play();
+    } catch (e) {
+      throw Exception('خطأ في التشغيل: $e');
+    }
   }
 
   Future<void> pause() => player.pause();
@@ -412,7 +445,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class SurahsScreen extends StatefulWidget {
-  final ApiService api; final QuranAudioService audio; final StorageService store;
+  final ApiService api;
+  final QuranAudioService audio;
+  final StorageService store;
   const SurahsScreen({super.key, required this.api, required this.audio, required this.store});
 
   @override
@@ -538,7 +573,8 @@ class _MushafScreenState extends State<MushafScreen> {
 }
 
 class RecitersScreen extends StatefulWidget {
-  final ApiService api; final QuranAudioService audio;
+  final ApiService api;
+  final QuranAudioService audio;
   const RecitersScreen({super.key, required this.api, required this.audio});
 
   @override
@@ -585,7 +621,8 @@ class _RecitersScreenState extends State<RecitersScreen> {
 }
 
 class PrayerScreen extends StatefulWidget {
-  final ApiService api; final StorageService store;
+  final ApiService api;
+  final StorageService store;
   const PrayerScreen({super.key, required this.api, required this.store});
 
   @override
@@ -672,7 +709,8 @@ class _PrayerScreenState extends State<PrayerScreen> {
 }
 
 class RadioScreen extends StatefulWidget {
-  final ApiService api; final QuranAudioService audio;
+  final ApiService api;
+  final QuranAudioService audio;
   const RadioScreen({super.key, required this.api, required this.audio});
 
   @override
@@ -782,7 +820,9 @@ class _LiveTvScreenState extends State<LiveTvScreen> {
 }
 
 class FavoritesScreen extends StatefulWidget {
-  final ApiService api; final QuranAudioService audio; final StorageService store;
+  final ApiService api;
+  final QuranAudioService audio;
+  final StorageService store;
   const FavoritesScreen({super.key, required this.api, required this.audio, required this.store});
 
   @override
@@ -850,7 +890,8 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class SettingsScreen extends StatelessWidget {
-  final StorageService store; final VoidCallback onChanged;
+  final StorageService store;
+  final VoidCallback onChanged;
   const SettingsScreen({super.key, required this.store, required this.onChanged});
 
   @override
@@ -889,7 +930,7 @@ class SettingsScreen extends StatelessWidget {
         },
       ),
     ])),
-    Card(child: ListTile(leading: const Icon(Icons.privacy_tip), title: const Text('الخصوصية'), subtitle: const Text('المفضلة والإعدادات محفوظة محلياً على الجهاز.'))),
+    Card(child: ListTile(leading: const Icon(Icons.privacy_tip), title: const Text('الخصوصية'), subtitle: const Text('المفضلة والإعدادات محفوظة محلياً على جهازك.'))),
   ]);
 }
 
@@ -927,13 +968,13 @@ class _AiScreenState extends State<AiScreen> {
         Uri.parse(endpoint),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'message': q, 'history': msgs}),
-      );
+      ).timeout(const Duration(seconds: 30));
       if (r.statusCode < 200 || r.statusCode >= 300) throw Exception('HTTP ${r.statusCode}');
       final j = jsonDecode(r.body);
       if (j['success'] == false) throw Exception(j['error'] ?? 'خطأ');
       msgs.add({'role': 'assistant', 'content': '${j['answer'] ?? j['message'] ?? ''}'});
       widget.store.chats = msgs.map((e) => Map<String, dynamic>.from(e)).toList();
-    } catch (_) {
+    } catch (e) {
       msgs.add({'role': 'assistant', 'content': 'تعذر الاتصال بالمساعد. اربط API الخاص بك عبر:\n--dart-define=QURANLIVE_AI_ENDPOINT=https://your-api.example'});
     } finally {
       if (mounted) setState(() => loading = false);
